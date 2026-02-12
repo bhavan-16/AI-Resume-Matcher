@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Resume Matcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+
+<div class="container">
+    <h1>AI SaaS Resume Matcher</h1>
+
+    <form id="matchForm">
+        <label>Upload Resume</label>
+        <input type="file" name="resume" required>
+
+        <label>Job Description</label>
+        <textarea name="job_description" rows="6" required></textarea>
+
+        <button type="submit">Match Resume</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+document.getElementById("matchForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const response = await fetch("/match", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    document.getElementById("result").innerHTML = `
+        <h3>Match Score: ${data.match_score}%</h3>
+        <p><b>Matched Skills:</b> ${data.matched_skills.join(", ")}</p>
+        <p><b>Missing Skills:</b> ${data.missing_skills.join(", ")}</p>
+        <p><b>Recommendation:</b> ${data.recommendation}</p>
+    `;
+}
+</script>
+
+</body>
+</html>
